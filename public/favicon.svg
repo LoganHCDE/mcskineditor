@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="MC Skin Editor">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+  <g transform="translate(8,6)">
+    <rect width="16" height="4" fill="#3d2b1f"/>
+    <rect x="0" y="4" width="4" height="4" fill="#3d2b1f"/>
+    <rect x="12" y="4" width="4" height="4" fill="#3d2b1f"/>
+    <rect x="4" y="4" width="8" height="8" fill="#d4a574"/>
+    <rect x="4" y="6" width="2" height="2" fill="#ffffff"/>
+    <rect x="10" y="6" width="2" height="2" fill="#ffffff"/>
+    <rect x="4" y="6" width="1" height="1" fill="#2563eb"/>
+    <rect x="10" y="6" width="1" height="1" fill="#2563eb"/>
+    <rect x="6" y="10" width="4" height="1" fill="#b8956a"/>
+    <rect x="2" y="12" width="12" height="4" fill="#3b82f6"/>
+    <rect x="0" y="14" width="2" height="2" fill="#3b82f6"/>
+    <rect x="14" y="14" width="2" height="2" fill="#3b82f6"/>
+  </g>
+  <path d="M26 26h4v1h-4v4h-1v-4h-4v-1h4v-4h1v4z" fill="#22c55e" opacity="0.85"/>
+</svg>
