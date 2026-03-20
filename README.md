@@ -6,6 +6,8 @@ React + Vite app with a **fully client-side** AI skin assistant. The browser cal
 
 Run the app with `npm run dev`. Build static files with `npm run build` and host `dist/` on any static host.
 
+For **GitHub Pages** at `https://loganhcde.github.io/mcskineditor/`, Vite is configured with `base: '/mcskineditor/'` so JS/CSS resolve under that path. Pushes to `main` trigger [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml); set the repo’s **Settings → Pages → Source** to **GitHub Actions** so the workflow can publish. If you rename the repo, update `base` in `vite.config.ts` to match.
+
 In the chat panel you can pick **provider** (OpenAI, OpenRouter, Claude / Anthropic, Google Gemini), **model**, and **API keys**. For OpenAI, Claude, and Google, the model list is **loaded from the provider API** when a key is set; without a key you still get a **built-in preset list** so you can choose an ID before pasting a key. OpenRouter uses a **custom model slug only** (no preset list). Keys you enter are saved only in **localStorage** in your browser and are **required** for API calls (nothing is read from a server).
 
 ### CORS and browser limits

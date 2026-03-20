@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  base: '/mcskineditor/',
   plugins: [
     react(),
     tailwindcss(),
@@ -10,7 +11,8 @@ export default defineConfig({
       name: 'favicon-no-store-dev',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          if (req.url?.split('?')[0] === '/favicon.svg') {
+          const path = req.url?.split('?')[0] ?? ''
+          if (path === '/favicon.svg' || path.endsWith('/favicon.svg')) {
             res.setHeader('Cache-Control', 'no-store')
           }
           next()
