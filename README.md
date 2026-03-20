@@ -14,6 +14,32 @@ Some providers do not send CORS headers that allow `fetch` from every website or
 
 Optional: set **`VITE_OPENAI_BASE_URL`** at build time (see [`.env.example`](./.env.example)) to point OpenAI-style requests at another OpenAI-compatible base URL.
 
+## LLM context and how edits are applied
+
+Each chat turn is a **single completion** (not streaming) built in `src/llm/chatSkinEdit.ts` and `src/llm/completeJsonSkinEdit.ts`.
+
+### What the model sees
+
+- **System prompt** (`src/llm/skinEditPrompt.ts`): role, strict JSON output shape, operation semantics (`set_pixels`, `set_region`, `fill_area`, `set_model_type`), Steve vs Alex **UV layout** for every body-part face, and rules such as a cap on how many operations to return.
+- **User message**: a **JSON string** from `buildSkinLlmPayload` (`src/llm/buildSkinLlmPayload.ts`) with `schemaVersion`, the user’s natural-language **instruction**, `modelType`, and the **entire current skin** as **`pixelsRgbaBase64`** (64×64 RGBA, row-major, base64 — on the order of tens of thousands of characters of text).
+- **Chat history**: the last **8** text turns (user/assistant) are forwarded as prior messages; they are **not** paired with past skin snapshots, only with the **latest** skin payload on the current request.
+- **Vision (optional)**: for providers/models that **likely** support images (`src/llm/visionModel.ts`), a **64×64 PNG** data URL is attached **in addition** to the base64-in-JSON encoding, so the model can align UV language with a real image. Text-only models get JSON only.
+
+OpenAI/OpenRouter use `response_format: { type: 'json_object' }` where supported; Anthropic and Gemini use their own JSON modes. If the model still wraps output in fences or prose, `extractJsonFromLlmText` (`src/llm/extractLlmJson.ts`) tries to recover a JSON object before parsing.
+
+### How edits become pixels
+
+The model must return `{ "message", "operations" }`. Operations are **validated** (`src/types/aiEdits.ts`) then executed **entirely in the browser** (`src/utils/aiEditExecutor.ts`): pixels are clipped to the skin, invalid areas for Steve/Alex are skipped, `fill_area` fills a **whole UV face** from one sample pixel (not a color flood-fill), and there is a safety limit on how many pixels may change in one apply. Failed validation or oversize edits surface as errors to the user. On parse/validation failure, the client **retries once** with a stricter system suffix (`SKIN_EDIT_RETRY_SYSTEM_SUFFIX`).
+
+### Possible improvements
+
+- **Smaller or smarter skin context**: sending full RGBA every turn is simple but token-heavy. Alternatives include region crops for localized edits, diffs from a previous turn, or leaning on **vision-only** input for multimodal models and dropping redundant base64 text where provider APIs allow.
+- **Richer memory**: history is short and **text-only**; the model never sees earlier skin states explicitly. Storing or summarizing “what changed” per turn, or attaching a **thumbnail / hash** of the last applied state, could help multi-step refinement and “undo that” style requests.
+- **Structured output**: where available, provider-native **JSON schema** or tool/function calling could reduce malformed JSON compared to free-form `json_object` + extraction.
+- **Vision heuristics**: OpenRouter model IDs are matched with patterns; wrong guesses either omit a helpful image or send one to a text-only model. A manual “attach skin image” toggle or capability flags from the provider would be more reliable.
+- **Streaming and UX**: responses are waited on in one block; streaming partial JSON would need careful parsing or a different protocol.
+- **Server or proxy**: a small backend could cache the skin server-side, shrink payloads, enforce quotas, and avoid **CORS** limits for some providers — at the cost of no longer being purely static hosting.
+
 ---
 
 # React + TypeScript + Vite
