@@ -8,6 +8,7 @@ import {
   hexToRgba,
   loadImageFromUrl,
   publicAssetUrl,
+  createDefaultSkinForModelType,
   type RGBA,
 } from '../utils/textureUtils';
 import {
@@ -95,21 +96,6 @@ function addRecentColor(colors: string[], newColor: string): string[] {
   return [newColor, ...filtered].slice(0, 16);
 }
 
-function createDefaultSkinForModel(modelType: ModelType): ImageData {
-  const skin = createDefaultSkin();
-  if (modelType === 'steve') return skin;
-
-  // For Alex fallback, clear pixels that are invalid in slim-arm layout.
-  for (let y = 0; y < skin.height; y++) {
-    for (let x = 0; x < skin.width; x++) {
-      if (!isValidSkinPixelForModel(x, y, 'alex')) {
-        setPixel(skin, x, y, [0, 0, 0, 0]);
-      }
-    }
-  }
-  return skin;
-}
-
 function imageDataEquals(a: ImageData, b: ImageData): boolean {
   if (a.width !== b.width || a.height !== b.height) return false;
   if (a.data.length !== b.data.length) return false;
@@ -184,7 +170,7 @@ export const useSkinStore = create<SkinState>((set, get) => {
       const url = type === 'alex' ? publicAssetUrl('alex.png') : publicAssetUrl('steve.png');
       loadImageFromUrl(url)
         .then(applyDefaultSkin)
-        .catch(() => applyDefaultSkin(createDefaultSkinForModel(type)));
+        .catch(() => applyDefaultSkin(createDefaultSkinForModelType(type)));
     },
     toggleGrid: () => set((s) => ({ showGrid: !s.showGrid })),
     toggleBodyPartOutlines: () => set((s) => ({ showBodyPartOutlines: !s.showBodyPartOutlines })),
@@ -340,7 +326,7 @@ export const useSkinStore = create<SkinState>((set, get) => {
           ...clearProposalState,
         });
       }).catch(() => {
-        const fresh = createDefaultSkinForModel(currentModelType);
+        const fresh = createDefaultSkinForModelType(currentModelType);
         set({
           skinData: fresh,
           defaultSkinBaseline: cloneImageData(fresh),

@@ -262,3 +262,71 @@ export function createDefaultSkin(): ImageData {
 
   return img;
 }
+
+/**
+ * Procedural 64×64 slim-arm default (Alex UV layout). Used when `public/alex.png` is missing or fails to load.
+ * Not a copy of Mojang's texture — same role as `createDefaultSkin` for Steve.
+ */
+export function createDefaultAlexSkin(): ImageData {
+  const img = createBlankSkin();
+  const skinColor: RGBA = [234, 184, 150, 255];
+  const shirtColor: RGBA = [58, 150, 74, 255];
+  const pantsColor: RGBA = [63, 42, 30, 255];
+  const hairColor: RGBA = [200, 90, 40, 255];
+  const eyeWhite: RGBA = [255, 255, 255, 255];
+  const eyeIris: RGBA = [120, 180, 80, 255];
+  const mouthColor: RGBA = [150, 100, 80, 255];
+  const shoeColor: RGBA = [60, 40, 30, 255];
+
+  function fillRect(x1: number, y1: number, x2: number, y2: number, color: RGBA) {
+    for (let y = y1; y < y2; y++)
+      for (let x = x1; x < x2; x++)
+        setPixel(img, x, y, color);
+  }
+
+  // Head — same UV as Steve
+  fillRect(0, 8, 32, 16, skinColor);
+  fillRect(8, 0, 24, 8, skinColor);
+  fillRect(8, 0, 16, 2, hairColor);
+  setPixel(img, 10, 12, eyeWhite);
+  setPixel(img, 11, 12, eyeIris);
+  setPixel(img, 13, 12, eyeWhite);
+  setPixel(img, 14, 12, eyeIris);
+  setPixel(img, 11, 14, mouthColor);
+  setPixel(img, 12, 14, mouthColor);
+  setPixel(img, 13, 14, mouthColor);
+
+  // Body — same UV as Steve
+  fillRect(16, 20, 40, 32, shirtColor);
+  fillRect(20, 16, 36, 20, shirtColor);
+
+  // Legs — same UV as Steve
+  fillRect(0, 20, 16, 32, pantsColor);
+  fillRect(4, 16, 12, 20, pantsColor);
+  fillRect(4, 28, 8, 32, shoeColor);
+  fillRect(0, 28, 4, 32, shoeColor);
+  fillRect(8, 28, 12, 32, shoeColor);
+  fillRect(12, 28, 16, 32, shoeColor);
+  fillRect(16, 52, 32, 64, pantsColor);
+  fillRect(20, 48, 28, 52, pantsColor);
+  fillRect(20, 60, 24, 64, shoeColor);
+  fillRect(16, 60, 20, 64, shoeColor);
+  fillRect(24, 60, 28, 64, shoeColor);
+  fillRect(28, 60, 32, 64, shoeColor);
+
+  // Alex right arm — 3px wide (40,16)–(54,32) + tops
+  fillRect(44, 16, 50, 20, shirtColor);
+  fillRect(40, 20, 54, 32, shirtColor);
+  fillRect(40, 28, 54, 32, skinColor);
+
+  // Alex left arm — (32,48)–(46,64) + tops
+  fillRect(36, 48, 42, 52, shirtColor);
+  fillRect(32, 52, 46, 64, shirtColor);
+  fillRect(32, 60, 46, 64, skinColor);
+
+  return img;
+}
+
+export function createDefaultSkinForModelType(modelType: 'steve' | 'alex'): ImageData {
+  return modelType === 'alex' ? createDefaultAlexSkin() : createDefaultSkin();
+}
