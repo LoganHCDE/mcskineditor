@@ -7,6 +7,7 @@ import {
   fillRectPixels,
   hexToRgba,
   loadImageFromUrl,
+  publicAssetUrl,
   type RGBA,
 } from '../utils/textureUtils';
 import {
@@ -180,7 +181,7 @@ export const useSkinStore = create<SkinState>((set, get) => {
         }));
       };
 
-      const url = type === 'alex' ? '/alex.png' : '/steve.png';
+      const url = type === 'alex' ? publicAssetUrl('alex.png') : publicAssetUrl('steve.png');
       loadImageFromUrl(url)
         .then(applyDefaultSkin)
         .catch(() => applyDefaultSkin(createDefaultSkinForModel(type)));
@@ -323,7 +324,7 @@ export const useSkinStore = create<SkinState>((set, get) => {
 
     newSkin: () => {
       const currentModelType = get().modelType;
-      const defaultSkinUrl = currentModelType === 'alex' ? '/alex.png' : '/steve.png';
+      const defaultSkinUrl = currentModelType === 'alex' ? publicAssetUrl('alex.png') : publicAssetUrl('steve.png');
 
       loadImageFromUrl(defaultSkinUrl).then((data) => {
         set({

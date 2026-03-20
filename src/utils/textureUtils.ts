@@ -183,6 +183,12 @@ export function loadImageFromUrl(url: string): Promise<ImageData> {
   });
 }
 
+/** Static file under `public/`, respecting Vite `base` (e.g. GitHub Pages subpaths). */
+export function publicAssetUrl(path: string): string {
+  const trimmed = path.replace(/^\//, '');
+  return `${import.meta.env.BASE_URL}${trimmed}`;
+}
+
 export function createDefaultSkin(): ImageData {
   const img = createBlankSkin();
   const skinColor: RGBA = [200, 170, 140, 255];

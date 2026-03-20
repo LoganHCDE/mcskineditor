@@ -5,7 +5,7 @@ import Editor2D from './components/Editor2D';
 import Editor3D from './components/Editor3D';
 import MiniPreview3D from './components/MiniPreview3D';
 import ChatPanel from './components/ChatPanel';
-import { loadImageFromUrl } from './utils/textureUtils';
+import { loadImageFromUrl, publicAssetUrl } from './utils/textureUtils';
 import { useSkinStore } from './store/useSkinStore';
 
 function ModeToggle() {
@@ -60,7 +60,7 @@ export default function App() {
   const toggleChat = useCallback(() => setChatOpen((prev) => !prev), []);
 
   useEffect(() => {
-    loadImageFromUrl('/steve.png').then((data) => {
+    loadImageFromUrl(publicAssetUrl('steve.png')).then((data) => {
       useSkinStore.getState().loadDefaultSkin(data);
     });
   }, []);
